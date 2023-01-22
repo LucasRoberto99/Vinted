@@ -23,7 +23,9 @@ const offerRoute = require("./routes/offer");
 // je les utilise
 app.use(profileRoute);
 app.use(offerRoute);
-
+app.get("/", (req, res) => {
+  res.json({ message: "Welcome on my server" });
+});
 app.all("*", (req, res) => {
   res.status(404).json({ message: "This route doesn't exist" });
 });
