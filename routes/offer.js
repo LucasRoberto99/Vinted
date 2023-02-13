@@ -181,7 +181,10 @@ router.get("/offers", async (req, res) => {
       .skip(pageSkip)
       .limit(3)
       .select("product_name product_price");
-    res.json(results);
+    res.json({
+      count: lengthOffer,
+      offers: results,
+    });
   } catch (error) {
     console.log(error);
     res.status(400).json({ message: error.message });
