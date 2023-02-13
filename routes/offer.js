@@ -177,6 +177,10 @@ router.get("/offers", async (req, res) => {
         $lte: priceMax,
       },
     })
+      .populate({
+        path: "owner",
+        select: "account",
+      })
       .sort({ product_price: sort })
       .skip(pageSkip)
       .limit(3)
