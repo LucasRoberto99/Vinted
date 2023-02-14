@@ -89,7 +89,7 @@ router.post(
         }
       );
 
-      newOffer[product_picture] = picture;
+      newOffer.product_picture = picture;
 
       await newOffer.save();
 
