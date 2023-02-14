@@ -2,6 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const fileUpload = require("express-fileupload");
 require("dotenv").config();
+
 const app = express();
 app.use(express.json());
 
@@ -11,11 +12,14 @@ mongoose.set("strictQuery", false);
 mongoose.connect(process.env.MONGODB_URI);
 
 //import de mes routes
+const payRoute = require("./routes/pay");
 const profileRoute = require("./routes/profile");
 const offerRoute = require("./routes/offer");
 // je les utilise
 app.use(profileRoute);
 app.use(offerRoute);
+app.use(payRoute);
+
 app.get("/", (req, res) => {
   res.json({ message: "Welcome on my server" });
 });

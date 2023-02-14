@@ -22,8 +22,16 @@ const Profile = require("../models/Profile");
 router.post("/user/signup", fileUpload(), async (req, res) => {
   try {
     const { username, email, password, newsletter } = req.body;
-    const { avatarPic } = req.files.avatar;
-    // console.log(convertToBase64(req.files.avatar));
+    // console.log(req.files);
+    let avatarPic = null;
+    if (req.files) {
+      avatarPic = req.files.avatar;
+    } else {
+      avatarPic = null;
+    }
+
+    // console.log(req.files.avatar);
+    // console.log(avatarPic);
     if (!username || !email || !password) {
       // console.log(req.body);
       return res.status(400).json({ message: "Please enter an username" });
@@ -39,7 +47,6 @@ router.post("/user/signup", fileUpload(), async (req, res) => {
       email: email,
       account: {
         username: username,
-        avatar: {},
       },
       newsletter: newsletter,
       token: token,
@@ -49,16 +56,18 @@ router.post("/user/signup", fileUpload(), async (req, res) => {
     // console.log(newProfile);
     await newProfile.save();
 
-    const avatar = await cloudinary.uploader.upload(
-      convertToBase64(avatarPic),
-      {
-        folder: `/vinted/avatarpic/${newProfile._id}`,
-      }
-    );
+    if (avatarPic) {
+      const avatar = await cloudinary.uploader.upload(
+        convertToBase64(avatarPic),
+        {
+          folder: `/vinted/avatarpic/${newProfile._id}`,
+        }
+      );
 
-    newProfile.account.avatar = avatar;
+      newProfile.account.avatar = avatar;
 
-    await newProfile.save();
+      await newProfile.save();
+    }
 
     const profile1 = await Profile.findOne({ email: email });
     // const resProfile = {

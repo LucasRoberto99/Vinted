@@ -20,6 +20,7 @@ const Offer = mongoose.model("Offer", {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Profile",
   },
+  sold: Boolean,
 });
 
 module.exports = Offer;

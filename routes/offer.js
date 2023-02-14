@@ -126,7 +126,7 @@ router.post(
         product_picture: picture,
       };
 
-      console.log(response);
+      // console.log(response);
       return res.json(response);
     } catch (error) {
       //   console.log(error);
@@ -186,7 +186,7 @@ router.get("/offers", async (req, res) => {
       parseInt(page);
     }
     const regExp = new RegExp(title, "i");
-    const lengthOffer = (await Offer.find()).length;
+    const lengthOffer = (await Offer.find({ sold: null })).length;
     // console.log(lengthOffer); //! 10 donc on va faire 3 par 3
     //! la limite est de 3 articles par pages donc:
     //! il faut faire : 0 3 6 9        -------> (page-1)*3 OUI
@@ -198,6 +198,7 @@ router.get("/offers", async (req, res) => {
         $gte: priceMin,
         $lte: priceMax,
       },
+      sold: null,
     })
       .populate({
         path: "owner",
