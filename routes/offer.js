@@ -90,6 +90,7 @@ router.post(
       );
 
       newOffer.product_picture = picture;
+      console.log(newOffer);
 
       await newOffer.save();
 
@@ -159,7 +160,7 @@ router.delete("/offer/delete", async (req, res) => {
 
 router.get("/offers", async (req, res) => {
   try {
-    let { title, priceMin, priceMax, sort, page } = req.query;
+    let { title, priceMin, priceMax, sort, page, limit } = req.query;
     // console.log(req.query.sort);
     if (!title) {
       title = "";
@@ -185,11 +186,11 @@ router.get("/offers", async (req, res) => {
       parseInt(page);
     }
     const regExp = new RegExp(title, "i");
-    const lengthOffer = await Offer.find().length;
+    const lengthOffer = (await Offer.find()).length;
     // console.log(lengthOffer); //! 10 donc on va faire 3 par 3
     //! la limite est de 3 articles par pages donc:
     //! il faut faire : 0 3 6 9        -------> (page-1)*3 OUI
-    const pageSkip = (page - 1) * 10;
+    const pageSkip = (page - 1) * 5;
     // console.log(sort);
     const results = await Offer.find({
       product_name: regExp,
@@ -204,8 +205,10 @@ router.get("/offers", async (req, res) => {
       })
       .sort({ product_price: sort })
       .skip(pageSkip)
-      .limit(10);
+      .limit(limit);
     // .select("product_name product_price");
+    // console.log(lengthOffer);
+
     res.json({
       count: lengthOffer,
       offers: results,

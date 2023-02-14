@@ -15,7 +15,7 @@ const Offer = mongoose.model("Offer", {
     max: 100000,
   },
   product_details: Array,
-  product_image: Object,
+  product_picture: Object,
   owner: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Profile",

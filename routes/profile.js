@@ -3,7 +3,15 @@ const router = express.Router();
 const uid2 = require("uid2");
 const SHA256 = require("crypto-js/sha256");
 const encBase64 = require("crypto-js/enc-base64");
-
+const cloudinary = require("cloudinary").v2;
+const convertToBase64 = (file) => {
+  return `data:${file.mimetype};base64,${file.data.toString("base64")}`;
+};
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 //
 const fileUpload = require("express-fileupload");
 
@@ -14,8 +22,10 @@ const Profile = require("../models/Profile");
 router.post("/user/signup", fileUpload(), async (req, res) => {
   try {
     const { username, email, password, newsletter } = req.body;
+    const { avatarPic } = req.files.avatar;
+    // console.log(convertToBase64(req.files.avatar));
     if (!username || !email || !password) {
-      console.log(req.body);
+      // console.log(req.body);
       return res.status(400).json({ message: "Please enter an username" });
     }
     const profilToFind = await Profile.exists({ email: email });
@@ -29,7 +39,7 @@ router.post("/user/signup", fileUpload(), async (req, res) => {
       email: email,
       account: {
         username: username,
-        avatar: Object,
+        avatar: {},
       },
       newsletter: newsletter,
       token: token,
@@ -38,14 +48,26 @@ router.post("/user/signup", fileUpload(), async (req, res) => {
     });
     // console.log(newProfile);
     await newProfile.save();
+
+    const avatar = await cloudinary.uploader.upload(
+      convertToBase64(avatarPic),
+      {
+        folder: `/vinted/avatarpic/${newProfile._id}`,
+      }
+    );
+
+    newProfile.account.avatar = avatar;
+
+    await newProfile.save();
+
     const profile1 = await Profile.findOne({ email: email });
-    const resProfile = {
-      _id: profile1._id,
-      token: profile1.token,
-      account: profile1.account,
-    };
+    // const resProfile = {
+    //   _id: profile1._id,
+    //   token: profile1.token,
+    //   account: profile1.account,
+    // };
     // console.log(resProfile);
-    res.json(resProfile);
+    res.json(profile1);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
