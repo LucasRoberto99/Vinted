@@ -4,13 +4,18 @@ const uid2 = require("uid2");
 const SHA256 = require("crypto-js/sha256");
 const encBase64 = require("crypto-js/enc-base64");
 
+//
+const fileUpload = require("express-fileupload");
+
+//
+
 const Profile = require("../models/Profile");
 
-router.post("/user/signup", async (req, res) => {
+router.post("/user/signup", fileUpload(), async (req, res) => {
   try {
     const { username, email, password, newsletter } = req.body;
-    if (!username || !email || !password || typeof newsletter !== "boolean") {
-      //   console.log(username);
+    if (!username || !email || !password) {
+      console.log(req.body);
       return res.status(400).json({ message: "Please enter an username" });
     }
     const profilToFind = await Profile.exists({ email: email });
