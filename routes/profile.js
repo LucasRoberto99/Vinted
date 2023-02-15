@@ -7,6 +7,7 @@ const cloudinary = require("cloudinary").v2;
 const convertToBase64 = (file) => {
   return `data:${file.mimetype};base64,${file.data.toString("base64")}`;
 };
+const cors = require("cors");
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
@@ -15,6 +16,7 @@ cloudinary.config({
 //
 const fileUpload = require("express-fileupload");
 
+router.use(cors());
 //
 
 const Profile = require("../models/Profile");

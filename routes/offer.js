@@ -1,12 +1,15 @@
 const express = require("express");
 const cloudinary = require("cloudinary").v2;
 const fileUpload = require("express-fileupload");
+const cors = require("cors");
 
 const convertToBase64 = (file) => {
   return `data:${file.mimetype};base64,${file.data.toString("base64")}`;
 };
 
 const router = express.Router();
+
+router.use(cors());
 
 const Profile = require("../models/Profile");
 
